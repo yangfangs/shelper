@@ -1,0 +1,66 @@
+/* ============================================================
+   性能优化 - 前端样式
+   ============================================================ */
+
+.loader {
+  font-weight: bold;
+  color: red;
+  visibility: visible;
+}
+
+/* 优化表格渲染性能 */
+.dataTables_wrapper {
+  will-change: transform;
+}
+
+/* 减少重绘和重排 */
+.tab-content {
+  contain: layout style;
+}
+
+/* 优化滚动性能 */
+.shiny-bound-output {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* 加载动画优化 - 使用 GPU 加速 */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-spinner {
+  will-change: transform;
+}
+
+/* 优化图片渲染 */
+.shiny-plot-output img {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* 优化按钮响应 */
+.btn {
+  transition: background-color 0.15s ease-out, border-color 0.15s ease-out;
+}
+
+/* DataTable 优化 */
+table.dataTable {
+  table-layout: fixed;
+}
+
+table.dataTable tbody tr {
+  transition: none;
+}
+
+/* 减少不必要的动画 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

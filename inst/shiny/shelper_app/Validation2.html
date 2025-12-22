@@ -1,0 +1,61 @@
+
+   <title>Shelper Tool Help Document</title>
+    <style>
+        body {font-family: Arial, sans-serif;}
+        h1, h2, h3 {color: #333;}
+        p {font-size: 1em;}
+        .step {margin-bottom: 20px;}
+        .example {background-color: #f7f7f7; border-left: 3px solid #ccc; padding: 10px; margin-top: 10px;}
+        code {background-color: #eaeaea; padding: 2px 4px; border-radius: 4px;}
+    </style>
+
+
+    <h1>Shelper Tool Help Document</h1>
+    <div class="step">
+        <h2>1. Select Genome Version:</h2>
+        <p>Select the reference genome version you are working with. You can choose between hg19 and hg38. This will determine the reference for the variant locations you input.</p>
+    </div>
+    <div class="step">
+        <h2>2. Input Validate Location and File Name:</h2>
+        <p>Enter the genomic location and the corresponding file name, separated by a comma. Each entry should be on a new line. The genomic location should be in the format of 'chromosome-position-reference>alternative', and the file name should correspond to the chromatogram file you intend to upload.</p>
+        <div class="example">
+            <p>Example:</p>
+            <code>17-41245245-CT-C,example1.ab1</code><br>
+            <code>13-32893229-G-A,example2.ab1</code><br>
+            <code>13-32914859-G-GA,example3.ab1</code><br>
+            <code>13-20763530-CACACGTTCTTGCAGCC-C,example4.ab1</code><br>
+            <code>13-20763210-CGTT-CGTTCGTT,example5.ab1</code>
+        </div>
+    </div>
+    <div class="step">
+        <h2>3. Upload Chromatogram File:</h2>
+        <p>Upload your chromatogram files here. The tool accepts files in .ab1 or .scf format. You can upload multiple files at once by selecting them in the file dialog or dragging and dropping them into the upload area.</p>
+        <div class="example">
+            <p>Example (The uploaded .ab1 file must be the same as the entered File Name):</p>
+            <code>example1.ab1</code><br>
+            <code>example2.ab1</code><br>
+            <code>example3.ab1</code><br>
+            <code>example4.ab1</code><br>
+            <code>example5.ab1</code>
+        </div>
+    </div>
+    <div class="step">
+        <h2>4. Load Example Data:</h2>
+        <p>If you want to test the tool or see how it works, you can load example data by checking this box. This will populate the input fields and generate a sample output based on preset example data.</p>
+    </div>
+    <div class="step">
+        <h2>5. Submit:</h2>
+        <p>After completing the above steps, click the 'Submit' button to process the data. The results will be displayed in the 'Results' tab, including the variant location, genotype, and an option to view the chromatogram plot.</p>
+    </div>
+    <div class="step">
+        <h2>Results Tab:</h2>
+        <p>The 'Results' tab will show the Check Result Table, where you can review the data associated with each variant location you've entered. It displays location, genotype, a checkmark indicating successful processing, and the start and end positions on the reference genome. You can also click 'Show' to view the chromatogram plot for each location.</p>
+    </div>
+    <div class="step">
+        <h2>Chromatogram Plot:</h2>
+        <p>Below the table, you will find the chromatogram plot which visualizes the sequencing data. You can use this to visually inspect the variants.</p>
+    </div>
+    <div class="step">
+        <h2>Alignment Information:</h2>
+        <p>At the bottom of the page, detailed information about the alignment is provided, including the Alignment, Reference Sequence, Alternate Allele, and Alignment Header.</p>
+    </div>

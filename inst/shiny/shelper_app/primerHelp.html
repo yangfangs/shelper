@@ -1,0 +1,33 @@
+
+    <h1>Shelper Tool Help Document</h1>
+    <section>
+        <h2>How to Input Data</h2>
+        <p>This section of the help document provides a guide on how to input data into the ADPV Tool.</p>
+        <ol>
+            <li>Select the Genome Version you would like to use for your analysis. You can choose between:
+                <ul>
+                    <li>hg19 (GRCh37)</li>
+                    <li>hg38 (GRCh38)</li>
+                </ul>
+            </li>
+            <li>Enter the Genome Location in the input field provided. The format should match the example given, such as '13-32914859-G-GA'.</li>
+            <li>You can load example data to see how the tool works by clicking the 'Load Example Data' button.</li>
+            <li>Once you have entered the required information, click 'Submit' to process your data.</li>
+        </ol>
+    </section>
+    <section>
+        <h2>Understanding the Output</h2>
+        <p>The output of the ADPV Tool is presented in a tabulated format with the following columns:</p>
+        <ul>
+            <li><strong>Forward/Reverse:</strong> Indicates whether the primer is a forward or reverse primer.</li>
+            <li><strong>Validate location:</strong> Shows the genome location that was input for validation.</li>
+            <li><strong>Sequence (5'-3'):</strong> Displays the nucleotide sequence of the primer.</li>
+            <li><strong>Start:</strong> Denotes the starting position of the primer on the genome.</li>
+            <li><strong>TM:</strong> Shows the melting temperature of the primer, important for PCR conditions.</li>
+            <li><strong>%GC:</strong> Indicates the percentage of guanine and cytosine in the primer sequence, which affects the primer's stability.</li>
+            <li><strong>Self complementarity:</strong> Displays the primer's potential for forming secondary structures with itself, which can affect the efficiency of the PCR.</li>
+            <li><strong>Self 3' complementarity:</strong> Similar to self complementarity but specifically at the 3' end of the primer.</li>
+            <li><strong>Product length:</strong> Shows the expected size of the PCR product generated with the primer pair.</li>
+        </ul>
+        <p>Each primer pair is listed with its respective details. Ensure that the primers chosen have optimal TM, %GC, and complementarity scores for efficient PCR amplification.</p>
+    </section>
