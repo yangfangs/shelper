@@ -4,7 +4,24 @@
 \alias{primerRes}
 \title{Primer Result}
 \usage{
-primerRes(inputloc, selectedGenomeVersion)
+primerRes(
+  inputloc,
+  selectedGenomeVersion,
+  custom_seq = NULL,
+  primer_min_size = 18,
+  primer_opt_size = 20,
+  primer_max_size = 27,
+  primer_min_tm = 58,
+  primer_opt_tm = 60,
+  primer_max_tm = 64,
+  primer_min_gc = 35,
+  primer_opt_gc = 50,
+  primer_max_gc = 65,
+  product_min_size = 300,
+  product_max_size = 1000,
+  region_upstream = 500,
+  region_downstream = 500
+)
 }
 \description{
 Primer Result

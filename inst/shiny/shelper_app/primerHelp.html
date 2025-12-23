@@ -2,19 +2,45 @@
     <h1>Shelper Tool Help Document</h1>
     <section>
         <h2>How to Input Data</h2>
-        <p>This section of the help document provides a guide on how to input data into the ADPV Tool.</p>
+        <p>This section of the help document provides a guide on how to input data into the Shelper Tool.</p>
         <ol>
             <li>Select the Genome Version you would like to use for your analysis. You can choose between:
                 <ul>
-                    <li>hg19 (GRCh37)</li>
-                    <li>hg38 (GRCh38)</li>
+                    <li><strong>hg19 (GRCh37)</strong></li>
+                    <li><strong>hg38 (GRCh38)</strong></li>
+                    <li><strong>Custom Sequence</strong>: Allows you to input your own reference sequence.</li>
+                </ul>
+                <p><em>If you select "Custom Sequence", a text area will appear where you must paste your reference sequence (FASTA format or raw sequence).</em></p>
+            </li>
+            <li>Enter the Genome Location in the input field provided.
+                <ul>
+                    <li>For <strong>hg19 / hg38</strong>: Use the format <code>Chromosome-Position-Ref-Alt</code> (e.g., <code>13-32914859-G-GA</code>).</li>
+                    <li>For <strong>Custom Sequence</strong>: Use the format <code>Name-Pos-Ref-Alt</code> (e.g., <code>MySeq-100-A-T</code>).
+                        <br><small>Note: 'Pos' is the 1-based index in your pasted sequence.</small>
+                    </li>
                 </ul>
             </li>
-            <li>Enter the Genome Location in the input field provided. The format should match the example given, such as '13-32914859-G-GA'.</li>
-            <li>You can load example data to see how the tool works by clicking the 'Load Example Data' button.</li>
+            <li>You can load example data to see how the tool works by clicking the 'Load Example Data' button (for hg19).</li>
             <li>Once you have entered the required information, click 'Submit' to process your data.</li>
         </ol>
     </section>
+    
+    <section style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; border: 1px solid #ddd;">
+        <h2>Custom Sequence Example</h2>
+        <p>Try the new <strong>Custom Sequence</strong> feature with the example below:</p>
+        
+        <p><strong>1. Select "Custom Sequence" and paste the following DNA sequence:</strong></p>
+        <textarea rows="6" style="width: 100%; font-family: monospace; font-size: 12px; padding: 5px;" readonly onclick="this.select();">
+GGATCCCGGGCTGCAGGAATTCGATATCAAGCTTATCGATACCGTCGACCTCGAGGGGGGGCCCGGTACCCAATTCGCCCTATAGTGAGTCGTATTACAATTCACTGGCCGTCGTTTTACAACGTCGTGACTGGGAAAACCCTGGCGTTACCCAACTTAATCGCCTTGCAGCACATCCCCCTTTCGCCAGCTGGCGTAATAGCGAAGAGGCCCGCACCGATCGCCCTTCCCAACAGTTGCGCAGCCTGAATGGCGAATGGCGCCTGATGCGGTATTTTCTCCTTACGCATCTGTGCGGTATTTCACACCGCATATGGTGCACTCTCAGTACAATCTGCTCTGATGCCGCATAGTTAAGCCAGCCCCGACACCCGCCAACACCCGCTGACGCGCCCTGACGGGCTTGTCTGCTCCCGGCATCCGCTTACAGACAAGCTGTGACCGTCTCCGGGAGCTGCATGTGTCAGAGGTTTTCACCGTCATCACCGAAACGCGCGA</textarea>
+        <p><small><i>(Click inside the box to select all)</i></small></p>
+
+        <p><strong>2. Enter the following Location:</strong></p>
+        <div style="background-color: #fff; padding: 10px; border: 1px solid #ccc; font-family: monospace;">
+            ExampleGene-150-C-T
+        </div>
+        <p><small>This will design primers around position 150 of the sequence above.</small></p>
+    </section>
+
     <section>
         <h2>Understanding the Output</h2>
         <p>The output of the Shelper Tool is presented in a tabulated format with the following columns:</p>

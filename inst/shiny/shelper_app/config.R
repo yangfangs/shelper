@@ -97,3 +97,4 @@ load_config <- function() {
   message(sprintf("  - 缓存大小: %.0f MB", CACHE_MAX_SIZE / 1024^2))
   message(sprintf("  - 最大上传: %.0f MB", MAX_UPLOAD_SIZE_MB))
 }
+

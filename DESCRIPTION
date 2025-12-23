@@ -1,6 +1,6 @@
 Package: Shelper
 Title: Helper Functions for Sanger Sequencing Analysis
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: person("Fang", "Yang", email = "yangfangscu@gmail.com", role = c("aut", "cre"))
 Description: A package containing helper functions and a Shiny app for Sanger sequencing analysis.
     It provides tools for chromatogram alignment, peak analysis, and primer design.

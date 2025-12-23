@@ -12,7 +12,8 @@ pickchromatogram(
   pixelsperrow = 200,
   showtrim = FALSE,
   inputloc,
-  selectedGenomeVersion
+  selectedGenomeVersion,
+  custom_seq = NULL
 )
 }
 \description{

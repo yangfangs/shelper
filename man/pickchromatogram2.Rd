@@ -2,10 +2,10 @@
 % Please edit documentation in R/functions.R
 \name{pickchromatogram2}
 \alias{pickchromatogram2}
-\title{Pick Chromatogram 2 (Parallel)}
+\title{Pick Chromatogram 2}
 \usage{
-pickchromatogram2(inputinfo, selectedGenomeVersion)
+pickchromatogram2(inputinfo, selectedGenomeVersion, custom_seq = NULL)
 }
 \description{
-Pick Chromatogram 2 (Parallel)
+Pick Chromatogram 2
 }

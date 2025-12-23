@@ -17,17 +17,19 @@ library(sangerseqR)
 library(future)
 library(promises)
 library(future.apply)
-library(Shelper) # Ensure the package is loaded
-
-options(shiny.maxRequestSize = 300*1024^2)
 
 # 根据CPU核心数设置并行workers数量，保留1-2个核心给系统
 n_workers <- max(1, parallel::detectCores() - 2)
-# Check if plan is already set to avoid warning?
-# plan(multisession, workers = n_workers) 
-# It is better to let the user or global setting handle this, 
-# but for standalone app behavior, we can set it.
-tryCatch(plan(multisession, workers = n_workers), error = function(e) warning(e))
+plan(multisession, workers = n_workers)
+
+# 使用相对路径，避免服务器部署问题
+app_dir <- getwd()
+if (!file.exists(file.path(app_dir, 'polypeakfunctions.R'))) {
+  app_dir <- "/Users/fangy/Desktop/sanger/SangerPriVar"
+}
+source(file.path(app_dir, 'polypeakfunctions.R'))
+
+
 
 shinyServer(function(input, output, session) {
   
@@ -63,16 +65,49 @@ shinyServer(function(input, output, session) {
     genomeVersion2 <- input$genomeVersion2    # Assuming input UI element exists
     custom_seq_primer <- input$custom_seq_primer
     
+    # Capture new inputs
+    primer_min_size <- input$primer_min_size
+    primer_opt_size <- input$primer_opt_size
+    primer_max_size <- input$primer_max_size
+    primer_min_tm <- input$primer_min_tm
+    primer_opt_tm <- input$primer_opt_tm
+    primer_max_tm <- input$primer_max_tm
+    primer_min_gc <- input$primer_min_gc
+    primer_opt_gc <- input$primer_opt_gc
+    primer_max_gc <- input$primer_max_gc
+    product_min_size <- input$product_min_size
+    product_max_size <- input$product_max_size
+    region_upstream <- input$region_upstream
+    region_downstream <- input$region_downstream
+
     future({
+      # Ensure the updated function is used by sourcing the file
+      if (!exists("app_dir")) {
+          app_dir <- getwd()
+          if (!file.exists(file.path(app_dir, 'polypeakfunctions.R'))) {
+             app_dir <- "/Users/fangy/Desktop/sanger/SangerPriVar"
+          }
+      }
+      source(file.path(app_dir, 'polypeakfunctions.R'))
+      
       # Simulating a function that fetches primer data
-      # Load package in worker if needed
-      library(Shelper)
-      primerRes(location_primer, genomeVersion2, custom_seq = custom_seq_primer)
+      primerRes(location_primer, genomeVersion2, custom_seq = custom_seq_primer,
+                primer_min_size=primer_min_size, primer_opt_size=primer_opt_size, primer_max_size=primer_max_size,
+                primer_min_tm=primer_min_tm, primer_opt_tm=primer_opt_tm, primer_max_tm=primer_max_tm,
+                primer_min_gc=primer_min_gc, primer_opt_gc=primer_opt_gc, primer_max_gc=primer_max_gc,
+                product_min_size=product_min_size, product_max_size=product_max_size,
+                region_upstream=region_upstream, region_downstream=region_downstream)
     }) %...!% {
       # Catching exceptions from the future computation
       shinyjs::hide("progress-container")
       shinyjs::hide("progress-overlay")
       warning("Error in future: ", .)
+      showModal(modalDialog(
+        title = "Error",
+        paste("An error occurred during primer design:", .),
+        easyClose = TRUE,
+        footer = modalButton("Close")
+      ))
       NULL
     }
   })
@@ -89,23 +124,13 @@ shinyServer(function(input, output, session) {
       ))
       return()
     }
-
+    
     # 验证输入格式
     parts <- strsplit(input$location_primer, "-")[[1]]
     if (length(parts) < 2 || is.na(as.numeric(parts[2]))) {
       showModal(modalDialog(
         title = "Error:",
         "Invalid genome location format. Please use 'Chr-Pos-Ref-Alt' (e.g., 13-32914859-G-GA) or 'Chr-Pos'.",
-        easyClose = TRUE,
-        footer = modalButton("Close")
-      ))
-      return()
-    }
-    
-    if (input$genomeVersion2 == 'Custom' && (is.null(input$custom_seq_primer) || input$custom_seq_primer == "")) {
-      showModal(modalDialog(
-        title = "Error:",
-        "Please enter the custom sequence.",
         easyClose = TRUE,
         footer = modalButton("Close")
       ))
@@ -232,11 +257,44 @@ shinyServer(function(input, output, session) {
         } else {
           # 解析文本数据
           lines <- strsplit(input$textData, "\n")[[1]]
+          
+          # 验证输入格式
+          for (line in lines) {
+            parts <- strsplit(line, ",")[[1]]
+            if (length(parts) < 2) {
+              shinyjs::hide("progress-container")
+              shinyjs::hide("progress-overlay")
+              showModal(modalDialog(
+                title = "Error:",
+                HTML(paste("Invalid line format (missing comma): <br/>", line, "<br/>Expected 'Chr-Pos-Ref-Alt,Filename'.")),
+                easyClose = TRUE,
+                footer = modalButton("Close")
+              ))
+              return()
+            }
+            
+            # 验证坐标格式
+            coord_parts <- strsplit(parts[1], "-")[[1]]
+            if (length(coord_parts) != 4 || is.na(as.numeric(coord_parts[2]))) {
+              shinyjs::hide("progress-container")
+              shinyjs::hide("progress-overlay")
+              showModal(modalDialog(
+                title = "Error:",
+                HTML(paste("Invalid genomic coordinate format in line: <br/>", line, "<br/>Expected 'Chr-Pos-Ref-Alt' (e.g. 13-32914859-G-GA).")),
+                easyClose = TRUE,
+                footer = modalButton("Close")
+              ))
+              return()
+            }
+          }
+
           parsedData <- data.frame(matrix(ncol = 2, nrow = length(lines)))
           colnames(parsedData) <- c("GenomicCoordinate", "FileName")
           
           for (i in 1:length(lines)) {
-            parsedData[i,] <- strsplit(lines[i], ",")[[1]]
+            parts <- strsplit(lines[i], ",")[[1]]
+            parsedData[i, 1] <- parts[1]
+            parsedData[i, 2] <- parts[2]
           }
           
           # 将数据与文件名结合（如果已上传文件）
@@ -244,6 +302,20 @@ shinyServer(function(input, output, session) {
             # 创建一个以上传文件名为键，以文件路径为值的映射
             fileMap <- setNames(input$file1$datapath, input$file1$name)
             
+            # 检查是否有未上传的文件
+            missing_files <- parsedData$FileName[!parsedData$FileName %in% names(fileMap)]
+            if (length(missing_files) > 0) {
+              shinyjs::hide("progress-container")
+              shinyjs::hide("progress-overlay")
+              showModal(modalDialog(
+                title = "Error:",
+                HTML(paste("The following files referenced in text data were not uploaded:<br/>", paste(missing_files, collapse="<br/>"))),
+                easyClose = TRUE,
+                footer = modalButton("Close")
+              ))
+              return()
+            }
+
             # 将文件路径添加到解析数据中
             parsedData$FilePath <- fileMap[parsedData$FileName]
             
@@ -272,7 +344,6 @@ shinyServer(function(input, output, session) {
         
         # 异步执行计算
         future({
-          library(Shelper)
           pickchromatogram2(current_data, input_genomeVersion, custom_seq = custom_seq_variant)
         }) %...>% {
           result <- .
@@ -288,6 +359,12 @@ shinyServer(function(input, output, session) {
           shinyjs::hide("progress-container")
           shinyjs::hide("progress-overlay")
           warning("Error in validation: ", .)
+          showModal(modalDialog(
+            title = "Error",
+            paste("An error occurred during validation:", .),
+            easyClose = TRUE,
+            footer = modalButton("Close")
+          ))
           resolved_data(NULL)
         }
       }
@@ -359,7 +436,7 @@ shinyServer(function(input, output, session) {
       showTags(TRUE)
       
       output$fig_text <- renderPlot({
-        sangerseqR::chromatogram(valid_data$chromatogram_pick[[i]], width = 25, height = 3, trim5 = 0, trim3 = 0, showcalls = "both")
+        chromatogram(valid_data$chromatogram_pick[[i]], width = 25, height = 3, trim5 = 0, trim3 = 0, showcalls = "both")
       })
       output$refseq <- renderText(valid_data$refseq[[i]])
       output$altseq <- renderText(valid_data$altseq[[i]])
@@ -376,7 +453,7 @@ shinyServer(function(input, output, session) {
     }, ignoreInit = TRUE)
     
     
-    
+
     # 根据 showTags 的值动态生成UI
     output$dynamicUI <- renderUI({
       if(showTags()) {  # 如果 showTags 为 TRUE
@@ -425,7 +502,7 @@ shinyServer(function(input, output, session) {
         }
       }
     )
-    
+ 
     save_plot <- function(data, folder, filename) {
       # 确保文件夹存在
       if (!dir.exists(folder)) {
@@ -436,7 +513,7 @@ shinyServer(function(input, output, session) {
       full_filename <- file.path(folder, filename)
       
       png(full_filename, width = 25*72, height = 3*72) # 72 是每英寸的像素数
-      sangerseqR::chromatogram(data, width = 25, height = 3, trim5 = 0, trim3 = 0, showcalls = "both")
+      chromatogram(data, width = 25, height = 3, trim5 = 0, trim3 = 0, showcalls = "both")
       dev.off()
     }
     
@@ -483,6 +560,6 @@ shinyServer(function(input, output, session) {
       }
     )
     
-    
+
 }
 )
