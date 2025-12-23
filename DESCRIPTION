@@ -18,5 +18,6 @@ Imports:
     future.apply,
     DT,
     shinyFiles,
-    shinyjs
+    shinyjs,
+    shinyBS
 RoxygenNote: 7.3.3

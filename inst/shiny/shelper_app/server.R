@@ -59,12 +59,13 @@ shinyServer(function(input, output, session) {
   primer_reactive <- eventReactive(input$submit_primer, {
     location_primer <- input$location_primer  # Assuming input UI element exists
     genomeVersion2 <- input$genomeVersion2    # Assuming input UI element exists
+    custom_seq_primer <- input$custom_seq_primer
     
     future({
       # Simulating a function that fetches primer data
       # Load package in worker if needed
       library(Shelper)
-      primerRes(location_primer, genomeVersion2)
+      primerRes(location_primer, genomeVersion2, custom_seq = custom_seq_primer)
     }) %...!% {
       # Catching exceptions from the future computation
       shinyjs::hide("progress-container")
@@ -243,11 +244,12 @@ shinyServer(function(input, output, session) {
       # 如果有有效数据，执行异步计算
       if (!is.null(current_data) && nrow(current_data) > 0 && !"Error" %in% names(current_data)) {
         input_genomeVersion <- input$genomeVersion
+        custom_seq_variant <- input$custom_seq_variant
         
         # 异步执行计算
         future({
           library(Shelper)
-          pickchromatogram2(current_data, input_genomeVersion)
+          pickchromatogram2(current_data, input_genomeVersion, custom_seq = custom_seq_variant)
         }) %...>% {
           result <- .
           # 存储解析后的数据

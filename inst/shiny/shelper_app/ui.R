@@ -92,10 +92,20 @@ shinyUI(fluidPage(
                sidebarPanel(
                  # 添加单选按钮
                  radioButtons("genomeVersion2", "1. Select Genome Version:",
-                              choices = c("hg19 (GRCh37)" = "hg19", "hg38 (GRCh38)" = "hg38"),
+                              choices = c("hg19 (GRCh37)" = "hg19", "hg38 (GRCh38)" = "hg38", "Custom Sequence" = "Custom"),
                               selected = "hg19"),
+                 
+                 conditionalPanel(
+                    condition = "input.genomeVersion2 == 'Custom'",
+                    textAreaInput("custom_seq_primer", "Paste Custom Sequence:", 
+                                  placeholder = "Paste your reference sequence here...", 
+                                  rows = 5)
+                 ),
+                 
                  # Input field for location
                  textInput("location_primer", "2. Input Genome Location:"),
+                 bsTooltip("location_primer", "For Custom: Use 'Name-Pos-Ref-Alt' format. Pos is the 1-based index in your pasted sequence.", "right", options = list(container = "body")),
+                 
                  # # File upload control 
                  # fileInput("file_primer", "File upload:"),
                  # Submit button
@@ -120,10 +130,20 @@ shinyUI(fluidPage(
                sidebarPanel(
                  # 添加单选按钮
                  radioButtons("genomeVersion", "1. Select Genome Version:",
-                              choices = c("hg19 (GRCh37)" = "hg19", "hg38 (GRCh38)" = "hg38"),
+                              choices = c("hg19 (GRCh37)" = "hg19", "hg38 (GRCh38)" = "hg38", "Custom Sequence" = "Custom"),
                               selected = "hg19"),
+                              
+                 conditionalPanel(
+                    condition = "input.genomeVersion == 'Custom'",
+                    textAreaInput("custom_seq_variant", "Paste Custom Sequence:", 
+                                  placeholder = "Paste your reference sequence here...", 
+                                  rows = 5)
+                 ),
+                 
                  # 文本数据输入框
                  textAreaInput("textData", "2. Input vilidate location and file name (split by comma ',' )", "", rows = 10),
+                 bsTooltip("textData", "For Custom: Use 'Name-Pos-Ref-Alt' format in your CSV/Text input.", "right", options = list(container = "body")),
+                 
                  # 文件上传按钮
                  fileInput("file1", "3. Upload Chromatogram File (.ab1 or .scf)", 
                            multiple = TRUE,
