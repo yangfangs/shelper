@@ -19,6 +19,8 @@ library(promises)
 library(future.apply)
 library(Shelper) # Ensure the package is loaded
 
+options(shiny.maxRequestSize = 300*1024^2)
+
 # 根据CPU核心数设置并行workers数量，保留1-2个核心给系统
 n_workers <- max(1, parallel::detectCores() - 2)
 # Check if plan is already set to avoid warning?
@@ -82,6 +84,28 @@ shinyServer(function(input, output, session) {
       showModal(modalDialog(
         title = "Warning:",
         "Please input genome location",
+        easyClose = TRUE,
+        footer = modalButton("Close")
+      ))
+      return()
+    }
+
+    # 验证输入格式
+    parts <- strsplit(input$location_primer, "-")[[1]]
+    if (length(parts) < 2 || is.na(as.numeric(parts[2]))) {
+      showModal(modalDialog(
+        title = "Error:",
+        "Invalid genome location format. Please use 'Chr-Pos-Ref-Alt' (e.g., 13-32914859-G-GA) or 'Chr-Pos'.",
+        easyClose = TRUE,
+        footer = modalButton("Close")
+      ))
+      return()
+    }
+    
+    if (input$genomeVersion2 == 'Custom' && (is.null(input$custom_seq_primer) || input$custom_seq_primer == "")) {
+      showModal(modalDialog(
+        title = "Error:",
+        "Please enter the custom sequence.",
         easyClose = TRUE,
         footer = modalButton("Close")
       ))
