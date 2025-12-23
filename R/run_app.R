@@ -4,9 +4,9 @@
 #' @param launch.browser Whether to launch the browser. Default is TRUE.
 #' @export
 run_shelper <- function(port = 3838, launch.browser = TRUE) {
-  app_dir <- system.file("shiny", "shelper_app", package = "shelper")
+  app_dir <- system.file("shiny", "shelper_app", package = "Shelper")
   if (app_dir == "") {
-    stop("Could not find example directory. Try re-installing `shelper`.", call. = FALSE)
+    stop("Could not find example directory. Try re-installing `Shelper`.", call. = FALSE)
   }
   
   # Load configuration if available

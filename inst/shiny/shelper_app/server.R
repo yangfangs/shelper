@@ -17,7 +17,7 @@ library(sangerseqR)
 library(future)
 library(promises)
 library(future.apply)
-library(shelper) # Ensure the package is loaded
+library(Shelper) # Ensure the package is loaded
 
 # 根据CPU核心数设置并行workers数量，保留1-2个核心给系统
 n_workers <- max(1, parallel::detectCores() - 2)
@@ -63,7 +63,7 @@ shinyServer(function(input, output, session) {
     future({
       # Simulating a function that fetches primer data
       # Load package in worker if needed
-      library(shelper)
+      library(Shelper)
       primerRes(location_primer, genomeVersion2)
     }) %...!% {
       # Catching exceptions from the future computation
@@ -246,7 +246,7 @@ shinyServer(function(input, output, session) {
         
         # 异步执行计算
         future({
-          library(shelper)
+          library(Shelper)
           pickchromatogram2(current_data, input_genomeVersion)
         }) %...>% {
           result <- .

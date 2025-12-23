@@ -1,6 +1,6 @@
 # Shelper: Sanger Sequencing Helper Tools
 
-`shelper` is an R package designed to streamline Sanger sequencing analysis. It provides a comprehensive suite of tools for chromatogram visualization, variant validation, and primer design, all accessible through an intuitive Shiny application or R command-line functions.
+`Shelper` is an R package designed to streamline Sanger sequencing analysis. It provides a comprehensive suite of tools for chromatogram visualization, variant validation, and primer design, all accessible through an intuitive Shiny application or R command-line functions.
 
 ## Features
 
@@ -12,7 +12,7 @@
 
 ## Installation
 
-You can install the development version of `shelper` from GitHub:
+You can install the development version of `Shelper` from GitHub:
 
 ```r
 # install.packages("devtools")
@@ -21,7 +21,7 @@ devtools::install_github("yangfangs/shelper")
 
 ## System Requirements
 
-To utilize the full functionality of `shelper`, the following external tools should be installed and accessible in your system path:
+To utilize the full functionality of `Shelper`, the following external tools should be installed and accessible in your system path:
 
 1.  **Samtools**: For efficient retrieval of reference genome sequences.
 2.  **NCBI BLAST+ (`blastn`)**: For checking primer specificity.
@@ -32,7 +32,7 @@ To utilize the full functionality of `shelper`, the following external tools sho
 Before launching the application, you can configure the paths to your local reference genomes and tools. This is especially important if these tools are not in your system PATH or if you use custom database locations.
 
 ```r
-library(shelper)
+library(Shelper)
 
 # Configure paths (example)
 set_shelper_config(
@@ -52,7 +52,7 @@ set_shelper_config(
 The easiest way to use `shelper` is through its interactive web interface:
 
 ```r
-library(shelper)
+library(Shelper)
 
 # Launch the app
 run_shelper()
