@@ -1,4 +1,4 @@
-# shelper: Sanger Sequencing Helper Tools
+# Shelper: Sanger Sequencing Helper Tools
 
 `shelper` is an R package designed to streamline Sanger sequencing analysis. It provides a comprehensive suite of tools for chromatogram visualization, variant validation, and primer design, all accessible through an intuitive Shiny application or R command-line functions.
 
@@ -57,7 +57,8 @@ library(shelper)
 # Launch the app
 run_shelper()
 ```
+> **Note**: Shelper can only be run locally on macOS and Linux operating systems; Windows OS users should use the online version.
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the GNU GENERAL PUBLIC LICENSELicense.
