@@ -14,6 +14,7 @@ library(shiny)
 library(DT)
 library(shinyFiles)
 library(shinyjs)
+library(shinyBS)
 
 shinyUI(fluidPage(
   useShinyjs(),
