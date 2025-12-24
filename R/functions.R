@@ -14,6 +14,8 @@
 #' @param blastn Path to blastn executable
 #' @param blast_db Path to blast database
 #' @param temp_path Path for temporary files
+#' @param samtools Path to samtools executable
+#' @param primer3 Path to primer3_core executable
 #' @import Biostrings
 #' @import sangerseqR
 #' @import memoise
@@ -21,12 +23,14 @@
 #' @import future
 #' @import future.apply
 #' @export
-set_shelper_config <- function(hg19 = NULL, hg38 = NULL, blastn = NULL, blast_db = NULL, temp_path = NULL) {
+set_shelper_config <- function(hg19 = NULL, hg38 = NULL, blastn = NULL, blast_db = NULL, temp_path = NULL, samtools = NULL, primer3 = NULL) {
   if (!is.null(hg19)) .shelper_env$hg19 <- hg19
   if (!is.null(hg38)) .shelper_env$hg38 <- hg38
   if (!is.null(blastn)) .shelper_env$blastn <- blastn
   if (!is.null(blast_db)) .shelper_env$blast_db <- blast_db
   if (!is.null(temp_path)) .shelper_env$temp_path <- temp_path
+  if (!is.null(samtools)) .shelper_env$samtools <- samtools
+  if (!is.null(primer3)) .shelper_env$primer3 <- primer3
 }
 
 # Cache setup
@@ -36,9 +40,16 @@ set_shelper_config <- function(hg19 = NULL, hg38 = NULL, blastn = NULL, blast_db
 #' Get Sequence Cached
 #' @export
 get_sequence_cached <- memoise::memoise(function(hg, genome_loc) {
-  cmd_samtools <- paste0("samtools faidx ", hg, " ", genome_loc)
+  # Resolve samtools command
+  s_cmd <- "samtools"
+  # Check if configured in environment
+  if (!is.null(.shelper_env$samtools)) {
+    s_cmd <- .shelper_env$samtools
+  }
+  
+  cmd_samtools <- paste0(s_cmd, " faidx ", hg, " ", genome_loc)
   # Check if samtools is available
-  if (Sys.which("samtools") == "") {
+  if (s_cmd == "samtools" && Sys.which("samtools") == "") {
     warning("samtools not found in PATH. Make sure samtools is installed.")
   }
   result <- system(cmd_samtools, intern = TRUE)

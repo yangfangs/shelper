@@ -2,16 +2,35 @@
 # 性能优化版本 - 添加缓存和并行处理
 # ============================================================
 
-# hg19和38数据库，需要建立索引
-hg19 <- "/Users/fangy/fsdownload/blastdb/ucsc.hg19.fasta"
-hg38 <- "/Users/fangy/fsdownload/hg38/hg38.fa"
-#blastn工具，需要本地部署
-bn <- "/Users/fangy/Downloads/ncbi-blast-2.15.0+/bin/blastn"
-#balst使用的hg19数据库，需要本地部署
-bdb <- "/Users/fangy/fsdownload/blastdb/hg19"
+# Ensure configuration is loaded (especially for future workers)
+if (!exists("HG19_PATH")) {
+  # Try to find and source config.R
+  config_candidates <- c("config.R", "../config.R", "inst/shiny/shelper_app/config.R")
+  config_loaded <- FALSE
+  
+  for (conf in config_candidates) {
+    if (file.exists(conf)) {
+      source(conf)
+      if (exists("load_config")) load_config()
+      config_loaded <- TRUE
+      break
+    }
+  }
+  
+  if (!config_loaded && !exists("HG19_PATH")) {
+    # Fallback for when running in a different context or config not found
+    warning("config.R not found and HG19_PATH not defined. Some functions may fail.")
+  }
+}
 
-#绝对路径，需要指向当前目录
-seqs_path <- "/Users/fangy/Desktop/sanger"
+# Use configuration from config.R
+hg19 <- if (exists("HG19_PATH")) HG19_PATH else stop("HG19_PATH not defined")
+hg38 <- if (exists("HG38_PATH")) HG38_PATH else stop("HG38_PATH not defined")
+bn <- if (exists("BLASTN_PATH")) BLASTN_PATH else stop("BLASTN_PATH not defined")
+bdb <- if (exists("BLAST_DB_PATH")) BLAST_DB_PATH else stop("BLAST_DB_PATH not defined")
+seqs_path <- if (exists("TEMP_PATH")) TEMP_PATH else stop("TEMP_PATH not defined")
+samtools_cmd <- if (exists("SAMTOOLS_PATH")) SAMTOOLS_PATH else "samtools"
+primer3_cmd <- if (exists("PRIMER3_PATH")) PRIMER3_PATH else "primer3_core"
 
 #bash中需要部署的第三方软件（bash调用）
 # 1. samtools
@@ -21,12 +40,22 @@ library(Biostrings)
 library(memoise)
 library(cachem)
 
-# 创建缓存对象 - 最大缓存512MB，过期时间1小时
-cache <- cache_mem(max_size = 512 * 1024^2, max_age = 3600)
+# 创建缓存对象
+cache_size <- if (exists("CACHE_MAX_SIZE")) CACHE_MAX_SIZE else 512 * 1024^2
+cache_age <- if (exists("CACHE_MAX_AGE")) CACHE_MAX_AGE else 3600
+cache <- cache_mem(max_size = cache_size, max_age = cache_age)
 
 # 缓存 samtools faidx 调用结果
 get_sequence_cached <- memoise(function(hg, genome_loc) {
-  cmd_samtools <- paste0("samtools faidx ", hg, " ", genome_loc)
+  # Resolve samtools command inside the function for future workers
+  s_cmd <- "samtools"
+  if (exists("SAMTOOLS_PATH")) {
+    s_cmd <- SAMTOOLS_PATH
+  } else if (exists("samtools_cmd")) {
+    s_cmd <- samtools_cmd
+  }
+
+  cmd_samtools <- paste0(s_cmd, " faidx ", hg, " ", genome_loc)
   result <- system(cmd_samtools, intern = TRUE)
   if (length(result) > 1) {
     return(paste(result[2:length(result)], collapse = ""))
@@ -747,7 +776,16 @@ primerRes <- function(inputloc,selectedGenomeVersion, custom_seq=NULL,
   output.file <- file.path(seqs.path, "p3.temp1")
   p3.settings <- paste("-p3_settings_file=", p3.settings.file, sep='')
   p3.output <- paste("-output=", output.file, sep='')
-  cmd <- paste("primer3_core", p3.settings, p3.output, input.file,"-default_version=1")
+  
+  # Resolve primer3 command inside the function
+  p3_cmd <- "primer3_core"
+  if (exists("PRIMER3_PATH")) {
+    p3_cmd <- PRIMER3_PATH
+  } else if (exists("primer3_cmd")) {
+    p3_cmd <- primer3_cmd
+  }
+  
+  cmd <- paste(p3_cmd, p3.settings, p3.output, input.file,"-default_version=1")
   system(cmd)
   tmpfiles <- c(tmpfiles, output.file)
   #* 解析 Primer3 输出文件

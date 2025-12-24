@@ -46,8 +46,14 @@ BLASTN_PATH <- "/Users/fangy/Downloads/ncbi-blast-2.15.0+/bin/blastn"
 # BLAST 数据库路径
 BLAST_DB_PATH <- "/Users/fangy/fsdownload/blastdb/hg19"
 
+# Samtools 路径
+SAMTOOLS_PATH <- "/opt/homebrew/bin/samtools"
+
+# Primer3 core 路径
+PRIMER3_PATH <- "/opt/homebrew/bin/primer3_core"
+
 # 临时文件路径
-TEMP_PATH <- "/Users/fangy/Desktop/sanger"
+TEMP_PATH <- getwd()
 
 # ----------------------------------------------------------
 # Shiny 服务器配置

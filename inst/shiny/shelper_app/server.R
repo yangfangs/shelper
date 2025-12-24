@@ -18,15 +18,16 @@ library(future)
 library(promises)
 library(future.apply)
 
-# 根据CPU核心数设置并行workers数量，保留1-2个核心给系统
-n_workers <- max(1, parallel::detectCores() - 2)
-plan(multisession, workers = n_workers)
-
 # 使用相对路径，避免服务器部署问题
 app_dir <- getwd()
 if (!file.exists(file.path(app_dir, 'polypeakfunctions.R'))) {
   app_dir <- "/Users/fangy/Desktop/sanger/SangerPriVar"
 }
+
+# 加载配置文件
+source(file.path(app_dir, 'config.R'))
+load_config()
+
 source(file.path(app_dir, 'polypeakfunctions.R'))
 
 
@@ -81,13 +82,23 @@ shinyServer(function(input, output, session) {
     region_downstream <- input$region_downstream
 
     future({
-      # Ensure the updated function is used by sourcing the file
+      # Ensure app_dir is valid
       if (!exists("app_dir")) {
           app_dir <- getwd()
           if (!file.exists(file.path(app_dir, 'polypeakfunctions.R'))) {
              app_dir <- "/Users/fangy/Desktop/sanger/SangerPriVar"
           }
       }
+      
+      # Explicitly source config.R to ensure variables like HG19_PATH exist
+      config_path <- file.path(app_dir, 'config.R')
+      if (file.exists(config_path)) {
+        source(config_path)
+      } else {
+        # Fallback check
+        if (file.exists("config.R")) source("config.R")
+      }
+      
       source(file.path(app_dir, 'polypeakfunctions.R'))
       
       # Simulating a function that fetches primer data

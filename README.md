@@ -38,8 +38,10 @@ library(Shelper)
 set_shelper_config(
   hg19 = "/path/to/blastdb/ucsc.hg19.fasta",      # Path to hg19 fasta
   hg38 = "/path/to/hg38/hg38.fa",                 # Path to hg38 fasta
-  blastn = "/usr/local/bin/blastn",               # Path to blastn executable
-  blast_db = "/path/to/blastdb/hg19"              # Path to BLAST database
+  blastn = "/path/to/blastn",                     # Path to blastn executable
+  blast_db = "/path/to/blastdb/hg19",             # Path to BLAST database
+  samtools = "/path/to/samtools",                 # Path to samtools
+  primer3 = "/path/to/primer3_core"               # Path to primer3
 )
 ```
 
